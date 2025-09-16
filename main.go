@@ -3,19 +3,21 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/gnomegl/bssidx/pb"
 	"google.golang.org/protobuf/proto"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"strings"
 )
 
 func main() {
-	mapFlag := flag.Bool("m", false, "Show location on Google Maps")
-	flag.Bool("map", false, "Show location on Google Maps")
+	mapFlag := flag.Bool("m", false, "Show location on OpenStreetMap via geojson.io")
+	flag.Bool("map", false, "Show location on OpenStreetMap via geojson.io")
 	allFlag := flag.Bool("a", false, "Show all results")
 	flag.Bool("all", false, "Show all results")
 	flag.Parse()
@@ -87,7 +89,7 @@ func main() {
 		fmt.Printf("Longitude: %f\n", lon)
 
 		if *mapFlag {
-			url := fmt.Sprintf("http://www.google.com/maps/place/%f,%f", lat, lon)
+			url := createGeoJSONURL(lat, lon, mac)
 			exec.Command("xdg-open", url).Start()
 		}
 
@@ -108,4 +110,30 @@ func formatBSSID(bssid string) string {
 		}
 	}
 	return strings.Join(parts, ":")
+}
+
+func createGeoJSONURL(lat, lon float64, bssid string) string {
+	geoJSON := map[string]interface{}{
+		"type": "FeatureCollection",
+		"features": []map[string]interface{}{
+			{
+				"type": "Feature",
+				"geometry": map[string]interface{}{
+					"type":        "Point",
+					"coordinates": []float64{lon, lat}, 
+				},
+				"properties": map[string]interface{}{
+					"title":         bssid,
+					"description":   fmt.Sprintf("BSSID: %s\nLocation: %.6f, %.6f", bssid, lat, lon),
+					"marker-color":  "#ff0000",
+					"marker-size":   "medium",
+					"marker-symbol": "star",
+				},
+			},
+		},
+	}
+
+	jsonData, _ := json.Marshal(geoJSON)
+	encodedData := url.QueryEscape(string(jsonData))
+	return fmt.Sprintf("https://geojson.io/#data=data:application/json,%s", encodedData)
 }
