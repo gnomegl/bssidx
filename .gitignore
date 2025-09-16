@@ -1,0 +1,55 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Build directories
+bin/
+dist/
+build/
+
+# IDE specific files
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+*.sublime-workspace
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Compiled binary (using common naming patterns)
+main
+applewloc
+apple_bssid_locator
+
+# Protocol buffer generated files (already have .pb.go checked in, but ignore temp files)
+*.pb.go.tmp
+
+# Debug files
+*.pprof
+
+# Local configuration
+config.local.yaml
+config.local.json

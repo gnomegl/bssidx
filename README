@@ -1,0 +1,33 @@
+bssidx - BSSID Location Lookup Tool
+
+A simple command line tool for looking up WiFi access point locations using Apple's location services. Give it a BSSID (MAC address) and it tells you where that access point is located geographically.
+
+INSTALL
+
+    go install github.com/gnomegl/bssidx@latest
+
+USAGE
+
+    bssidx [flags] BSSID
+
+FLAGS
+
+    -m, -map    Open location in Google Maps
+    -a, -all    Show all results instead of exact match only
+
+EXAMPLES
+
+    bssidx aa:bb:cc:dd:ee:ff
+    bssidx -m 00:11:22:33:44:55
+    bssidx -a aa:bb:cc:dd:ee:ff
+
+The tool queries Apple's WiFi location database which contains millions of access points worldwide. Apple collects this data from iOS devices to provide location services.
+
+BUILDING
+
+Requires protoc compiler for the protobuf definitions:
+
+    go generate
+    go build
+
+The tool constructs a binary protobuf payload mimicking locationd requests and parses the response to extract latitude/longitude coordinates.
